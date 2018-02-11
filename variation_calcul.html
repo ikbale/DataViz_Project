@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="node_modules/d3/build/d3.js"></script>
+  
+
+<body>
+
+<script>
+
+d3.csv("data.csv", function(data) {
+
+	currency = []
+	keys = d3.keys(data[0])
+
+	data.forEach(function(d,i){
+			d.keys = +d.keys
+	});
+
+	for(j = 1; j <keys.length; j++){
+			currency.push(keys[j])
+	}
+
+	currency.forEach(function(currency){
+	    console.log(currency+" "+ variation('01/01/2018','OneMonth',currency,data))
+	});
+
+});
+
+var variation = function(currentDate,period,currency,data){
+
+	var a = 0
+	var b = 0
+	var nbr = 0
+
+	// OneWeek or TwoWeeks
+		if(period == 'OneWeek'){
+				nbr = 7
+		}
+		else if(period == 'TwoWeeks'){
+				nbr = 14
+		}
+
+	data.forEach(function(d,i){
+
+		if(currentDate == data[i].Date){
+		   a = data[i][currency]
+		}
+
+		previousDate = new Date(currentDate)
+		previousDate.setDate(previousDate.getDate() - nbr) 
+		previousDate = previousDate.toLocaleDateString()
+
+
+		if(previousDate == data[i].Date){
+		  b = data[i][currency]
+
+		}
+
+	});
+
+				t1 = a
+				t2= b
+
+		res = (t2 - t1) / t2
+
+	//OneMonth
+	if(period == 'OneMonth'){
+
+
+	    data.forEach(function(d,i){
+
+		if(currentDate == data[i].Date){
+		   a = data[i][currency]
+	}
+		previousDate = new Date(currentDate)
+		previousDate.setMonth(previousDate.getMonth() - 1) 
+		previousDate = previousDate.toLocaleDateString()
+		
+		if(previousDate == data[i].Date){
+		  b = data[i][currency]
+		}
+
+	});
+
+	    	t1 = a
+			t2=  b
+
+}
+
+		res = (t2 - t1) / t2
+	
+	return res.toFixed(2);
+}
+
+</script>
+
+
+
+</body>
+
+</html>
